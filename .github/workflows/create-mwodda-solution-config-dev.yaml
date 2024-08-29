@@ -72,21 +72,21 @@ jobs:
           touch $config_file
 
           # Copy module configuration (always required)
-          cat tf_config/module.txt >> $config_file
+          cat tf_config/parts/module.txt >> $config_file
 
           # Conditionally include app_services block
           if ${{ inputs.enable_app_services }}; then
-            cat tf_config/app_services.txt >> $config_file
+            cat tf_config/parts/app_services.txt >> $config_file
           fi
 
           # Conditionally include storage_accounts block
           if ${{ inputs.enable_storage_accounts }}; then
-            cat tf_config/storage_accounts.txt >> $config_file
+            cat tf_config/parts/storage_accounts.txt >> $config_file
           fi
 
           # Conditionally include databricks block
           if ${{ inputs.enable_databricks }}; then
-            cat tf_config/databricks.txt >> $config_file
+            cat tf_config/parts/databricks.txt >> $config_file
           fi
 
           # Close the module block
