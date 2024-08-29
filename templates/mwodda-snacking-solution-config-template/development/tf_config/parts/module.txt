@@ -1,4 +1,4 @@
-module "{solution_prefix}-{solution_pillar_name}-{solution_name}-PROJECT" {
+module "{solution_prefix}-{solution_product_short_name}-PROJECT" {
   source = "git@github.snacking-templates:Mars-DNA/Snacking-Templates.git//snacking-solution-infra-template?ref=snacking-solution-infra-template-v-{module_version}"
   solution_settings = {
     solution_prefix          = "{solution_prefix}"

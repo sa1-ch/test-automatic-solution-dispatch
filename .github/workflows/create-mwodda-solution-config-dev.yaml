@@ -8,10 +8,6 @@ on:
         required: true
         type: string
         default: "123"
-      solution_name:
-        description: "The name of the project (e.g., V2C, DSS)."
-        required: true
-        default: test
       solution_prefix:
         description: "A required prefix for the solution (default value: E2ESC)."
         default: ODDA
@@ -78,20 +74,19 @@ jobs:
 
       - name: Convert to upper solution prefix and name 
         run: |
-          echo "SOLUTION_NAME=$(echo "${{ inputs.solution_name }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
           echo "SOLUTION_PREFIX=$(echo "${{ inputs.solution_prefix }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
           echo "solution_product_short_name=$(echo "${{ inputs.solution_product_short_name }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
 
       - name: Create new branch
         run: |
-          branch_name="feature/ID-${{ inputs.ado_ticket_id }}-DEV-${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_NAME }}-CONFIG"
+          branch_name="feature/ID-${{ inputs.ado_ticket_id }}-DEV-${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-CONFIG"
           echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
           git checkout -b $branch_name
 
 
       - name: Create config file
         run: |
-          dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-${{ env.SOLUTION_NAME }}-EUS2"
+          dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-EUS2"
           echo "DEST_CONFIG_DIR_PATH=$dest_config_dir_path" >> $GITHUB_ENV
           mkdir -p $dest_config_dir_path
           ls -l
@@ -147,7 +142,6 @@ jobs:
         run: |
           for file in "${{ env.DEST_CONFIG_DIR_PATH }}"/*; do
             sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" "$file"
-            sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" "$file"
             sed -i "s/{solution_product_short_name}/${{ inputs.solution_product_short_name }}/g" "$file"
             sed -i "s/{solution_resource_name}/${{ inputs.solution_resource_name }}/g" "$file"
           done
@@ -160,7 +154,7 @@ jobs:
 
       # - name: Rename workflow file 
       #   run: |
-      #      wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_product_short_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
+      #      wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_product_short_name }}${{ env.solution_product_short_name }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
       #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
       #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
 
@@ -172,7 +166,7 @@ jobs:
       - name: Stage and commit changes
         run: |
           git add .
-          git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
+          git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-EUS2 infrastructure configuration"
 
       - name: Push to remote
         run: git push --set-upstream origin ${{ env.BRANCH_NAME }}
