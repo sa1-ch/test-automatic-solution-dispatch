@@ -94,6 +94,7 @@ jobs:
 
       - name: Replace placeholders in config file
         run: |
+          config_file="$dest_config_dir_path/main.tf"
           sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" $config_file
           sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" $config_file
           sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
