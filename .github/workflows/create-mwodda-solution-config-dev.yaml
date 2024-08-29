@@ -9,9 +9,11 @@ on:
         description: "ID of the task in ADO."
         required: true
         type: string
+        default: "123"
       solution_name:
         description: "The name of the project (e.g., V2C, DSS)."
         required: true
+        default: test
       solution_prefix:
         description: "A required prefix for the solution (default value: E2ESC)."
         default: ODDA
@@ -20,21 +22,26 @@ on:
         description: "The version of the Snacking solution infrastructure template module to be used (e.g., 1.0.0). Always try to use the latest version."
         required: true
         type: string
+        default: "3.0.3"
       enable_app_services:
         description: "Enable app services"
         required: true
         type: boolean
+        default: true
       enable_storage_accounts:
         description: "Enable storage accounts"
         required: true
         type: boolean
+        default: true
       enable_databricks:
         description: "Enable Databricks"
         required: true
         type: boolean
+        default: true
       solution_pillar_name:
         description: "Solution Pillar Name"
         required: true
+        default: "RTM"
 
 permissions:
   contents: write
