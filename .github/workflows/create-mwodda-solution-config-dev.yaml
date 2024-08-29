@@ -126,7 +126,7 @@ jobs:
           
 
           # Conditionally include logic_app block
-          if ${{ inputs.enable_logic_app == 'true' }} && ${{ inputs.enable_storage_accounts == 'true' }}; then
+          if ${{ inputs.enable_logic_app }}; then
             cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/logic_app.txt >> $config_file
           fi
 
