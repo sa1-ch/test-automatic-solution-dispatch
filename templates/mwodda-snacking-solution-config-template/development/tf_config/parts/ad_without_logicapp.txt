@@ -1,0 +1,17 @@
+  adfs = {
+    "solution_adf" = {
+      service_solution_abbr     = local.resource_abbr
+      key_vault_tf_instance_key = "solution_key_vault"
+      git = {
+        apply_configuration = var.environment_config.solution_settings["environment_abbreviation"] == "DEV" ? true : false
+        repository_name     = "dna-odda-${local.solution_name_lower}"
+        project_name        = "DNA-ODDA-${local.solution_name}"
+        account_name        = "marsanalytics"
+        branch_name         = "main"
+      }
+      mpe_integrations = {
+        datalakes_short_names      = ["LAKE", "STAGE", "VAULT"]
+      }
+      data_factory_private_endpoint = local.subnet_names.adf
+    }
+  }

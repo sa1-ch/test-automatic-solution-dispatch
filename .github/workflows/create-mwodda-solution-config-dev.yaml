@@ -39,7 +39,17 @@ on:
         description: "Enable storage accounts"
         required: true
         type: boolean
-        default: true
+        default: false
+      enable_logic_app:
+        description: "Enable logic_app"
+        required: true
+        type: boolean
+        default: false
+      enable_adf:
+        description: "Enable azure data factory"
+        required: true
+        type: boolean
+        default: false
       
       # enable_databricks:
       #   description: "Enable Databricks"
@@ -114,7 +124,20 @@ jobs:
             cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/storage_accounts.txt >> $config_file
           fi
 
+          # Conditionally include logic_app block
+          if ${{ inputs.enable_logic_app }} && ${{ inputs.enable_storage_accounts }}; then
+            cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/logic_app.txt >> $config_file
+          fi
 
+          # Conditionally include adf with logic_app integration block
+          if  ${{ inputs.enable_logic_app == 'true' && inputs.enable_adf == 'true' }}; then
+            cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/adf_with_logicapp.txt >> $config_file
+          fi
+
+          # Conditionally include adf without logic_app integration block
+          if  ${{ inputs.enable_logic_app == 'false' && inputs.enable_adf == 'true' }}; then
+            cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/adf_without_logicapp.txt >> $config_file
+          fi
 
           # Close the module block
           echo '}' >> $config_file
@@ -128,6 +151,11 @@ jobs:
             sed -i "s/{solution_product_short_name}/${{ inputs.solution_product_short_name }}/g" "$file"
             sed -i "s/{solution_resource_name}/${{ inputs.solution_resource_name }}/g" "$file"
           done
+
+      - name: Terraform fmt
+        run: |
+          cd ${{ env.DEST_CONFIG_DIR_PATH }}
+          terraform fmt
 
 
       # - name: Rename workflow file 

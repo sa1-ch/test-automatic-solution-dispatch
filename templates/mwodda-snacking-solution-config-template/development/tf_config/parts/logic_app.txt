@@ -1,0 +1,7 @@
+  logic_apps = {
+    "{solution_resource_name}" = {
+      service_solution_abbr            = local.resource_abbr
+      storage_account_tf_instance_key  = "solution_sa"
+      app_service_plan_tf_instance_key = "shared_logic_app_service_plan"
+    }
+  }
