@@ -109,6 +109,9 @@ jobs:
           cd development
           echo "======================================"
           ls
+          echo "****************************************"
+          cd ODDA-TEST-EUS2
+          ls
             
 
       # - name: Replace placeholders in config file
