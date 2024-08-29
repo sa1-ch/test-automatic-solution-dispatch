@@ -83,11 +83,12 @@ jobs:
           echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
           git checkout -b $branch_name
 
-      - name: Check if logic_app is enabled without storage_account
-        if: ${{ inputs.enable_logic_app == 'true' && inputs.enable_storage_accounts == 'false' }}
+      - name: Check for logic_app and storage_account dependency
         run: |
-          echo "Error: logic_app requires storage_account to be enabled."
-          exit 1
+          if [[ "${{ inputs.enable_logic_app }}" == "true" && "${{ inputs.enable_storage_accounts }}" != "true" ]]; then
+            echo "Error: logic_app requires storage_account to be enabled."
+            exit 1
+          fi
       - name: Create config file
         run: |
           dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-EUS2"
