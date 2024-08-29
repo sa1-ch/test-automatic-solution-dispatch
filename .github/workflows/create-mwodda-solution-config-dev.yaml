@@ -1,4 +1,4 @@
-name: CREATE-SCDACORE-SOLUTION-CONFIG
+name: CREATE-MWODDACORE-SOLUTION-CONFIG
 
 on:
   workflow_dispatch:
@@ -112,12 +112,13 @@ jobs:
       #     ls
             
 
-      - name: Replace placeholders in config file
+      - name: Replace placeholders in all files in the config directory
         run: |
-          config_file="${{ env.DEST_CONFIG_DIR_PATH }}/main.tf"
-          sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" $config_file
-          sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" $config_file
-          sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
+          for file in "${{ env.DEST_CONFIG_DIR_PATH }}"/*; do
+            sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" "$file"
+            sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" "$file"
+            sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" "$file"
+          done
 
 
       # - name: Rename workflow file 
