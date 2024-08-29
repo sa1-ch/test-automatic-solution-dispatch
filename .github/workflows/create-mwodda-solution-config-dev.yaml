@@ -1,6 +1,8 @@
 name: CREATE-SCDACORE-SOLUTION-CONFIG
 
 on:
+  push:
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       ado_ticket_id:
