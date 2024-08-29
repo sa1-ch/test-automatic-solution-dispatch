@@ -70,6 +70,7 @@ jobs:
           find templates/mwodda-snacking-solution-config-template/development/tf_config -maxdepth 1 -type f -exec cp {} $dest_config_dir_path/ \;
           config_file="$dest_config_dir_path/main.tf"
           touch $config_file
+          ls -l $config_file
 
           # Copy module configuration (always required)
           cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/module.txt >> $config_file
