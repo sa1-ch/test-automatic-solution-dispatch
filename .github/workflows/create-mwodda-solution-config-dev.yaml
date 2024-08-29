@@ -65,6 +65,7 @@ jobs:
           dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_NAME }}-EUS2"
           echo "DEST_CONFIG_DIR_PATH=$dest_config_dir_path" >> $GITHUB_ENV
           mkdir -p $dest_config_dir_path
+          ls -l
 
           # Copy non-parts files from tf_config to destination
           find templates/mwodda-snacking-solution-config-template/development/tf_config -maxdepth 1 -type f -exec cp {} $dest_config_dir_path/ \;
@@ -93,12 +94,17 @@ jobs:
           # Close the module block
           echo '}' >> $config_file
 
-      - name: Replace placeholders in config file
+      - name: list
         run: |
-          config_file="$dest_config_dir_path/main.tf"
-          sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" $config_file
-          sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" $config_file
-          sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
+          ls
+            
+
+      # - name: Replace placeholders in config file
+      #   run: |
+      #     config_file="$dest_config_dir_path/main.tf"
+      #     sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" $config_file
+      #     sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" $config_file
+      #     sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
 
 
       # - name: Rename workflow file 
@@ -107,15 +113,15 @@ jobs:
       #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
       #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
 
-      - name: Set git config
-        run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      # - name: Set git config
+      #   run: |
+      #     git config user.name "${{ github.actor }}"
+      #     git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
-      - name: Stage and commit changes
-        run: |
-          git add .
-          git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_PILLAR_NAME }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
+      # - name: Stage and commit changes
+      #   run: |
+      #     git add .
+      #     git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_PILLAR_NAME }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
 
-      - name: Push to remote
-        run: git push --set-upstream origin ${{ env.BRANCH_NAME }}
+      # - name: Push to remote
+      #   run: git push --set-upstream origin ${{ env.BRANCH_NAME }}
