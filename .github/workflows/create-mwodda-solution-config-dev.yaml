@@ -120,11 +120,11 @@ jobs:
           sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
 
 
-      - name: Rename workflow file 
-        run: |
-           wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_pillar_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
-           mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
-           mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
+      # - name: Rename workflow file 
+      #   run: |
+      #      wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_pillar_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
+      #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
+      #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
 
       - name: Set git config
         run: |
