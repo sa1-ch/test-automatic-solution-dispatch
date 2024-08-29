@@ -1,0 +1,6 @@
+  key_vaults = {
+    "solution_key_vault" = {
+      service_solution_abbr = local.resource_abbr
+      akv_subnet            = local.subnet_names.key_vault
+    }
+  }

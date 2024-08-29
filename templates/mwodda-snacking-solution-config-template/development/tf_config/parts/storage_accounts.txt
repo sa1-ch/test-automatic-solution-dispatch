@@ -2,7 +2,7 @@
     "solution_sa" = {
       service_solution_abbr        = local.storage_abbr
       replication_type             = var.environment_config.solution_settings["environment_abbreviation"] == "DEV" ? "LRS" : "GRS"
-      private_endpoint_subnet_name = local.subnet_names.storage_account_2
+      private_endpoint_subnet_name = local.subnet_names.storage_account
       resource_type_suffix         = "sa"
     }
   }

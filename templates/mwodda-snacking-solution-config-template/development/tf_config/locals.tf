@@ -3,7 +3,7 @@ locals {
     storage_account            = "sapesnet-003",
     app_service                = "appsnet-001"
     logic_app_integration      = "appsnet-001"
-    key_vault_private_endpoint = "akvpesnet-001",
+    key_vault                  = "akvpesnet-001",
     adf                        = "adfpesnet-001"
   }
   solution_prefix = "ODDA"

@@ -16,6 +16,19 @@ on:
         description: "A required prefix for the solution (default value: E2ESC)."
         default: ODDA
         required: true
+      solution_pillar_name:
+        description: "Solution Pillar Name"
+        required: true
+        default: "DCOM"
+      solution_product_short_name:
+        description: "Solution Product Short Name"
+        required: true
+        default: "DCOMDEMANDDELIVERY"
+      solution_resource_name:
+        description: "Solution Resource Name"
+        required: true
+        default: "DCOMODD"
+      
       module_version:
         description: "The version of the Snacking solution infrastructure template module to be used (e.g., 1.0.0). Always try to use the latest version."
         required: true
@@ -36,10 +49,12 @@ on:
         required: true
         type: boolean
         default: true
-      solution_pillar_name:
-        description: "Solution Pillar Name"
+      enable_keyvault:
+        description: "Enable KeyVault"
         required: true
-        default: "RTM"
+        type: boolean
+        default: true
+
 
 permissions:
   contents: write
@@ -98,6 +113,11 @@ jobs:
             cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/databricks.txt >> $config_file
           fi
 
+          # Conditionally include keyvault block
+          if ${{ inputs.enable_keyvault }}; then
+            cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/key_vault.txt >> $config_file
+          fi
+
           # Close the module block
           echo '}' >> $config_file
 
@@ -118,6 +138,8 @@ jobs:
             sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" "$file"
             sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" "$file"
             sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" "$file"
+            sed -i "s/{solution_product_short_name}/${{ inputs.solution_product_short_name }}/g" "$file"
+            sed -i "s/{solution_resource_name}/${{ inputs.solution_resource_name }}/g" "$file"
           done
 
 
