@@ -119,8 +119,14 @@ jobs:
             cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/storage_accounts.txt >> $config_file
           fi
 
+          # Check if logic_app is enabled without storage_account
+          if: ${{ inputs.enable_logic_app == 'true' && inputs.enable_storage_accounts == 'false' }}
+          run: |
+            echo "Error: logic_app requires storage_account to be enabled."
+            exit 1
+
           # Conditionally include logic_app block
-          if ${{ inputs.enable_logic_app }} && ${{ inputs.enable_storage_accounts }}; then
+          if ${{ inputs.enable_logic_app == 'true' }} && ${{ inputs.enable_storage_accounts == 'true' }}; then
             cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/logic_app.txt >> $config_file
           fi
 
