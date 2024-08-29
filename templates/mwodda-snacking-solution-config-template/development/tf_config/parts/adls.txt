@@ -1,0 +1,9 @@
+  datalake = {
+    platform_name_prefix = ""
+    project_directory_targets = {
+      "LAKE"  = ["RAW", "OUTPUT"]
+      "VAULT" = ["RAW", "OUTPUT"]
+      "STAGE" = ["PROCESS"]
+    }
+    directory_name = local.solution_name
+  }

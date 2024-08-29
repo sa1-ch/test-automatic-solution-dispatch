@@ -12,8 +12,14 @@ environment_config = {
     cicd_service_principal_name         = "Stage - DNA-DEV-MW-DEMAND-{solution_resource_name}-CICD-EUS2"
   }
 
-
+  app_services = {
+    solution_webapp = {
+      docker_image_name = "{solution_resource_name}:development"
+      cmdb_tag          = "DNA-DEV-MW-DEMAND-FAST-EUS2"
+    }
+  }
   databricks = {
+
 
     secret_to_spark_env_mappings = {
       aoh-spclientid        = "aoh-spclientid",
@@ -137,4 +143,6 @@ environment_config = {
       }
     }
   }
+
+
 }

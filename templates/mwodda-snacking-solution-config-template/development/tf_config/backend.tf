@@ -5,6 +5,6 @@ terraform {
     resource_group_name  = "ODDA-TFSTATE-DEV-RG"
     storage_account_name = "oddatfstateeus2devsa"
     container_name       = "resource-tfstate"
-    key                  = "ODDA1-{solution_pillar_name}{solution_name}-EUS2"
+    key                  = "ODDA1-{solution_resource_name}-EUS2"
   }
 }

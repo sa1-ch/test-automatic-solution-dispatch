@@ -16,10 +16,6 @@ on:
         description: "A required prefix for the solution (default value: E2ESC)."
         default: ODDA
         required: true
-      solution_pillar_name:
-        description: "Solution Pillar Name"
-        required: true
-        default: "DCOM"
       solution_product_short_name:
         description: "Solution Product Short Name"
         required: true
@@ -44,16 +40,17 @@ on:
         required: true
         type: boolean
         default: true
-      enable_databricks:
-        description: "Enable Databricks"
-        required: true
-        type: boolean
-        default: true
-      enable_keyvault:
-        description: "Enable KeyVault"
-        required: true
-        type: boolean
-        default: true
+      
+      # enable_databricks:
+      #   description: "Enable Databricks"
+      #   required: true
+      #   type: boolean
+      #   default: true
+      # enable_keyvault:
+      #   description: "Enable KeyVault"
+      #   required: true
+      #   type: boolean
+      #   default: true
 
 
 permissions:
@@ -73,7 +70,7 @@ jobs:
         run: |
           echo "SOLUTION_NAME=$(echo "${{ inputs.solution_name }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
           echo "SOLUTION_PREFIX=$(echo "${{ inputs.solution_prefix }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
-          echo "SOLUTION_PILLAR_NAME=$(echo "${{ inputs.solution_pillar_name }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
+          echo "solution_product_short_name=$(echo "${{ inputs.solution_product_short_name }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
 
       - name: Create new branch
         run: |
@@ -84,7 +81,7 @@ jobs:
 
       - name: Create config file
         run: |
-          dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_PILLAR_NAME }}-${{ env.SOLUTION_NAME }}-EUS2"
+          dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-${{ env.SOLUTION_NAME }}-EUS2"
           echo "DEST_CONFIG_DIR_PATH=$dest_config_dir_path" >> $GITHUB_ENV
           mkdir -p $dest_config_dir_path
           ls -l
@@ -98,6 +95,15 @@ jobs:
           # Copy module configuration (always required)
           cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/module.txt >> $config_file
 
+          # Copy keyVault configuration
+          cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/key_vault.txt >> $config_file
+
+          # Copy databricks configuration
+          cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/databricks.txt >> $config_file
+          
+          # Copy ADLS configuration
+          cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/adls.txt >> $config_file
+
           # Conditionally include app_services block
           if ${{ inputs.enable_app_services }}; then
             cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/app_services.txt >> $config_file
@@ -108,28 +114,10 @@ jobs:
             cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/storage_accounts.txt >> $config_file
           fi
 
-          # Conditionally include databricks block
-          if ${{ inputs.enable_databricks }}; then
-            cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/databricks.txt >> $config_file
-          fi
 
-          # Conditionally include keyvault block
-          if ${{ inputs.enable_keyvault }}; then
-            cat templates/mwodda-snacking-solution-config-template/development/tf_config/parts/key_vault.txt >> $config_file
-          fi
 
           # Close the module block
           echo '}' >> $config_file
-
-      # - name: list
-      #   run: |
-      #     ls
-      #     cd development
-      #     echo "======================================"
-      #     ls
-      #     echo "****************************************"
-      #     cd ODDA-${{ env.SOLUTION_PILLAR_NAME }}-TEST-EUS2
-      #     ls
             
 
       - name: Replace placeholders in all files in the config directory
@@ -137,7 +125,6 @@ jobs:
           for file in "${{ env.DEST_CONFIG_DIR_PATH }}"/*; do
             sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" "$file"
             sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" "$file"
-            sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" "$file"
             sed -i "s/{solution_product_short_name}/${{ inputs.solution_product_short_name }}/g" "$file"
             sed -i "s/{solution_resource_name}/${{ inputs.solution_resource_name }}/g" "$file"
           done
@@ -145,7 +132,7 @@ jobs:
 
       # - name: Rename workflow file 
       #   run: |
-      #      wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_pillar_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
+      #      wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_product_short_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
       #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
       #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
 
@@ -157,7 +144,7 @@ jobs:
       - name: Stage and commit changes
         run: |
           git add .
-          git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_PILLAR_NAME }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
+          git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.solution_product_short_name }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
 
       - name: Push to remote
         run: git push --set-upstream origin ${{ env.BRANCH_NAME }}

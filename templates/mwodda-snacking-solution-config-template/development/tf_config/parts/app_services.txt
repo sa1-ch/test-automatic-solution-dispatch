@@ -1,5 +1,5 @@
   app_services = {
-    rtmfast_webapp = {
+    {solution_resource_name}_webapp = {
       service_solution_abbr            = local.resource_abbr
       runtime_version                  = "3.11"
       docker_image_name                = var.environment_config.app_services.solution_webapp.docker_image_name
