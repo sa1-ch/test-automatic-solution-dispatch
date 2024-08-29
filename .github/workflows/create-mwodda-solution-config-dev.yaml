@@ -106,6 +106,9 @@ jobs:
       - name: list
         run: |
           ls
+          cd development
+          echo "======================================"
+          ls
             
 
       # - name: Replace placeholders in config file
