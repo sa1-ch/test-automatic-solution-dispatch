@@ -1,0 +1,12 @@
+  app_services = {
+    rtmfast_webapp = {
+      service_solution_abbr            = local.resource_abbr
+      runtime_version                  = "3.11"
+      docker_image_name                = var.environment_config.app_services.solution_webapp.docker_image_name
+      cmdb_tag                         = var.environment_config.app_services.solution_webapp.cmdb_tag
+      acr_tf_instance_key              = "shared_acr"
+      app_service_plan_tf_instance_key = "shared_weblnx_app_service_plan"
+      http2_enabled                    = true
+      app_type                         = "LinuxAppService"
+    }
+  }

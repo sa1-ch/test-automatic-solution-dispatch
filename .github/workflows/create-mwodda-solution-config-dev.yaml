@@ -1,0 +1,119 @@
+name: CREATE-SCDACORE-SOLUTION-CONFIG
+
+on:
+  workflow_dispatch:
+    inputs:
+      ado_ticket_id:
+        description: "ID of the task in ADO."
+        required: true
+        type: string
+      solution_name:
+        description: "The name of the project (e.g., V2C, DSS)."
+        required: true
+      solution_prefix:
+        description: "A required prefix for the solution (default value: E2ESC)."
+        default: ODDA
+        required: true
+      module_version:
+        description: "The version of the Snacking solution infrastructure template module to be used (e.g., 1.0.0). Always try to use the latest version."
+        required: true
+        type: string
+      enable_app_services:
+        description: "Enable app services"
+        required: true
+        type: boolean
+      enable_storage_accounts:
+        description: "Enable storage accounts"
+        required: true
+        type: boolean
+      enable_databricks:
+        description: "Enable Databricks"
+        required: true
+        type: boolean
+      solution_pillar_name:
+        description: "Solution Pillar Name"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  create_new_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Convert to upper solution prefix and name 
+        run: |
+          echo "SOLUTION_NAME=$(echo "${{ inputs.solution_name }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
+          echo "SOLUTION_PREFIX=$(echo "${{ inputs.solution_prefix }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
+          echo "SOLUTION_PILLAR_NAME=$(echo "${{ inputs.solution_pillar_name }}" | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
+
+      - name: Create new branch
+        run: |
+          branch_name="feature/ID-${{ inputs.ado_ticket_id }}-DEV-${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_NAME }}-CONFIG"
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
+          git checkout -b $branch_name
+
+
+      - name: Create config file
+        run: |
+          dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-x${{ env.SOLUTION_NAME }}-EUS2"
+          echo "DEST_CONFIG_DIR_PATH=$dest_config_dir_path" >> $GITHUB_ENV
+          mkdir -p $dest_config_dir_path
+
+          # Copy non-parts files from tf_config to destination
+          find templates/mwodda-snacking-solution-config-template/development/tf_config -maxdepth 1 -type f -exec cp {} $dest_config_dir_path/ \;
+          config_file="$dest_config_dir_path/main.tf"
+          touch $config_file
+
+          # Copy module configuration (always required)
+          cat tf_parts/module.txt >> $config_file
+
+          # Conditionally include app_services block
+          if ${{ inputs.enable_app_services }}; then
+            cat tf_parts/app_services.txt >> $config_file
+          fi
+
+          # Conditionally include storage_accounts block
+          if ${{ inputs.enable_storage_accounts }}; then
+            cat tf_parts/storage_accounts.txt >> $config_file
+          fi
+
+          # Conditionally include databricks block
+          if ${{ inputs.enable_databricks }}; then
+            cat tf_parts/databricks.txt >> $config_file
+          fi
+
+          # Close the module block
+          echo '}' >> $config_file
+
+      - name: Replace placeholders in config file
+        run: |
+          sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" $config_file
+          sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" $config_file
+          sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
+
+
+      # - name: Rename workflow file 
+      #   run: |
+      #      wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_pillar_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
+      #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
+      #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
+
+      - name: Set git config
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - name: Stage and commit changes
+        run: |
+          git add .
+          git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_PILLAR_NAME }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
+
+      - name: Push to remote
+        run: git push --set-upstream origin ${{ env.BRANCH_NAME }}

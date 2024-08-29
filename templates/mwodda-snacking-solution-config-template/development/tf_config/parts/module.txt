@@ -1,0 +1,24 @@
+module "{solution_prefix}-{solution_pillar_name}-{solution_name}-PROJECT" {
+  source = "git@github.snacking-templates:Mars-DNA/Snacking-Templates.git//snacking-solution-infra-template?ref=snacking-solution-infra-template-v-{module_version}"
+  solution_settings = {
+    solution_prefix          = "{solution_prefix}"
+    solution_name            = local.solution_name
+    environment_abbreviation = var.environment_config.solution_settings.environment_abbreviation
+    tags = {
+      {{TAGS}}
+    }
+    spoke_abbr                          = local.spoke_abbr
+    prov_group_name                     = "DNA-${var.environment_config.solution_settings.environment_abbreviation}-MW-DEMAND-PROVISIONER"
+    entra_group_owner_emails            = var.azure_active_directory_group_owner
+    solution_admins_emails              = [
+      "hardik.talati@effem.com",
+      "shravan.shravankumar@effem.com",
+      "amitoz.s.sidhu@effem.com"
+    ]
+    solution_service_principal_name     = var.environment_config.solution_settings.solution_service_principal_name
+    solution_develop_entra_group_access = var.environment_config.solution_settings.solution_develop_entra_group_access
+    main_admin_entra_group              = "DNA-${var.environment_config.solution_settings.environment_abbreviation}-MW-ODDA-ADMIN"
+    location                            = "eastus2"
+    tenant_id                           = var.azure_tenant_id
+    cicd_service_principal_name         = var.environment_config.solution_settings.cicd_service_principal_name
+  }

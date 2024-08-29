@@ -1,0 +1,36 @@
+  databricks = {
+    key_vault_tf_instance_key               = "solution_key_vault"
+    secretscope_name                        = "${local.solution_name}-SECRETSCOPE"
+    workspace_folder_name                   = local.solution_name
+    repos_folder_name                       = local.solution_name
+    databricks_secret_to_spark_env_mappings = var.environment_config.databricks.secret_to_spark_env_mappings
+    databricks_group_roles                  = var.environment_config.databricks.databricks_group_roles
+    shared_policy_names_to_read             = ["DNA Product Compute Policy"]
+    interactive_clusters = {
+      "solution_cluster" = {
+        spark_version                   = var.environment_config.databricks.interactive_clusters.solution_cluster.spark_version
+        shared_policy_name              = var.environment_config.databricks.interactive_clusters.solution_cluster.shared_policy_name
+        node_type_id                    = var.environment_config.databricks.interactive_clusters.solution_cluster.node_type_id
+        cluster_name                    = "${local.solution_name}-CLUSTER"
+        interactive_cluster_custom_tags = var.environment_config.databricks.interactive_cluster_custom_tags
+        spark_conf                      = var.environment_config.databricks.interactive_clusters.solution_cluster.spark_conf
+      }
+    }
+    cluster_pools = {
+      "solution_cluster_pool" = {
+        node_type_id                               = var.environment_config.databricks.cluster_pools.solution_cluster_pool.node_type_id
+        spark_version                              = var.environment_config.databricks.cluster_pools.solution_cluster_pool.spark_version
+        pool_name                                  = "${local.solution_name}-POOL"
+        max_capacity                               = var.environment_config.databricks.cluster_pools.solution_cluster_pool.max_capacity
+        disk_spec_disk_type_azure_disk_volume_type = var.environment_config.databricks.cluster_pools.solution_cluster_pool.disk_spec_disk_type_azure_disk_volume_type
+        cluster_pools_custom_tags                  = var.environment_config.databricks.cluster_pool_custom_tags
+      }
+    }
+    custom_policies = {
+      "solution_cluster_pool_policy" = {
+        policy_name                   = "DNA ${local.resource_abbr} Pool Compute Policy"
+        cluster_pool_tf_instance_keys = ["solution_cluster_pool"]
+        policy_definition             = var.environment_config.databricks.custom_policies.solution_cluster_pool_policy.policy_definition
+      }
+    }
+  }
