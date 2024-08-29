@@ -62,7 +62,7 @@ jobs:
 
       - name: Create config file
         run: |
-          dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-x${{ env.SOLUTION_NAME }}-EUS2"
+          dest_config_dir_path="development/${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_NAME }}-EUS2"
           echo "DEST_CONFIG_DIR_PATH=$dest_config_dir_path" >> $GITHUB_ENV
           mkdir -p $dest_config_dir_path
 
