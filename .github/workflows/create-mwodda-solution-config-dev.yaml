@@ -9,7 +9,7 @@ on:
         type: string
         default: "123"
       solution_prefix:
-        description: "A required prefix for the solution (default value: E2ESC)."
+        description: "A required prefix for the solution (default value: ODDA)."
         default: ODDA
         required: true
       solution_product_short_name:
