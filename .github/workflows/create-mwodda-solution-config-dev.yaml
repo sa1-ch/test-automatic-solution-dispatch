@@ -1,8 +1,6 @@
 name: CREATE-SCDACORE-SOLUTION-CONFIG
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       ado_ticket_id:
@@ -103,41 +101,40 @@ jobs:
           # Close the module block
           echo '}' >> $config_file
 
-      - name: list
-        run: |
-          ls
-          cd development
-          echo "======================================"
-          ls
-          echo "****************************************"
-          cd ODDA-${{ env.SOLUTION_PILLAR_NAME }}-TEST-EUS2
-          ls
+      # - name: list
+      #   run: |
+      #     ls
+      #     cd development
+      #     echo "======================================"
+      #     ls
+      #     echo "****************************************"
+      #     cd ODDA-${{ env.SOLUTION_PILLAR_NAME }}-TEST-EUS2
+      #     ls
             
 
       - name: Replace placeholders in config file
         run: |
           config_file="${{ env.DEST_CONFIG_DIR_PATH }}/main.tf"
-          cat $config_file
-      #     sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" $config_file
-      #     sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" $config_file
-      #     sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
+          sed -i "s/{solution_prefix}/${{ inputs.solution_prefix }}/g" $config_file
+          sed -i "s/{solution_name}/${{ inputs.solution_name }}/g" $config_file
+          sed -i "s/{solution_pillar_name}/${{ inputs.solution_pillar_name }}/g" $config_file
 
 
-      # - name: Rename workflow file 
-      #   run: |
-      #      wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_pillar_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
-      #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
-      #      mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
+      - name: Rename workflow file 
+        run: |
+           wf_filename=$(echo "dev-${{ env.SOLUTION_PREFIX }}1-${{ env.solution_pillar_name }}${{ env.SOLUTION_NAME }}-eus2.yaml" | tr '[:upper:]' '[:lower:]')
+           mv ${{ env.DEST_CONFIG_DIR_PATH }}/workflow.yaml ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename
+           mv ${{ env.DEST_CONFIG_DIR_PATH }}/$wf_filename .github/workflows/
 
-      # - name: Set git config
-      #   run: |
-      #     git config user.name "${{ github.actor }}"
-      #     git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      - name: Set git config
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
-      # - name: Stage and commit changes
-      #   run: |
-      #     git add .
-      #     git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_PILLAR_NAME }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
+      - name: Stage and commit changes
+        run: |
+          git add .
+          git commit -m "Initial ${{ env.SOLUTION_PREFIX }}-${{ env.SOLUTION_PILLAR_NAME }}-${{ env.SOLUTION_NAME }}-EUS2 infrastructure configuration"
 
-      # - name: Push to remote
-      #   run: git push --set-upstream origin ${{ env.BRANCH_NAME }}
+      - name: Push to remote
+        run: git push --set-upstream origin ${{ env.BRANCH_NAME }}
