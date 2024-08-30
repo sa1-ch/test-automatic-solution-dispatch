@@ -142,7 +142,11 @@ jobs:
 
           # Close the module block
           echo '}' >> $config_file
-            
+          
+      - name: cat
+        run: |
+          cd ${{ env.DEST_CONFIG_DIR_PATH }}
+          cat main.tf           
 
       - name: Replace placeholders in all files in the config directory
         run: |
